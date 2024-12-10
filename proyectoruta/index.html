@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gestión de Clientes de Préstamos</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header>
+  </header>
+
+  <div id="menu" class="menu">
+    <ul>
+      <li><a href="#registro" onclick="mostrarSeccion('registro')">Registro</a></li>
+      <li><a href="#pagos" onclick="mostrarSeccion('pagos')">Pagos</a></li>
+      <li><a href="#agregar" onclick="mostrarSeccion('agregar')">Agregar</a></li>
+    </ul>
+  </div>
+
+  <main>
+    <section id="registro" class="active">
+      <h2>Lista de Clientes</h2>
+      <ul id="clientList"></ul>
+    </section>
+
+    <section id="pagos" style="display:none;">
+      <h2>Pagos</h2>
+      <ul id="pagosList"></ul>
+    </section>
+    
+    <section id="agregar" style="display:none;">
+      <h2>Agregar Cliente</h2>
+      <form id="clientDataForm">
+        <label for="name">Nombre:</label>
+        <input type="text" id="name" name="name" required> 
+        <label for="Telefono">Teléfono:</label>
+        <input type="number" id="Telefono" name="Telefono" required>
+        <label for="direccion">Dirección:</label>
+        <input type="text" id="street" name="direccion" required>
+        <label for="semanasTotales">Semanas Totales:</label>
+        <input type="number" id="semanasTotales" name="semanasTotales" required>
+        <label for="debt">Monto de Deuda:</label>
+        <input type="number" id="debt" name="debt" required>
+        <div>
+          <label><input type="checkbox" id="addReference" />
+            Agregar Referencia
+          </label>
+        </div>
+        <div id="referenceField" style="display: none;">
+          <label for="reference">Referencia:</label>
+          <input type="text" id="reference" name="reference" />
+        </div>        
+
+        <button type="submit">Registrar</button>
+      </form>
+    </section>
+  </main>
+
+  <footer>
+    <button id="menuToggle" class="menu-toggle">
+      <div class="img-delmenu"><img src="img/icons8-menú-64.png" alt="menu"></div>
+    </button>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>

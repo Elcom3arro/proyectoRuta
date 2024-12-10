@@ -1,0 +1,149 @@
+las variables de clientes son:
+    nombre,
+    calle,
+    deuda,
+    telefono,
+    referencia,
+    semana: 1,
+    semanasTotales,
+    pagoSemanal: deuda / 10,
+    totalPagado: 0,
+    deudaRestante: deuda
+
+
+//////////////////////////////
+
+
+
+function mostrarOpcionesPago(index) {
+  const cliente = clients[index];
+  const listaPagos = document.getElementById('pagosList');
+
+  // Crear un formulario dinámico para manejar los pagos
+  listaPagos.innerHTML = `
+      <p><strong>Nombre:</strong> ${cliente.nombre}</p>
+      <p><strong>Semana Actual:</strong> ${cliente.semana} de ${cliente.semanasTotales}</p>
+      <p><strong>Pago Semanal:</strong> $${cliente.pagoSemanal}</p>
+      <p><strong>Total Pagado:</strong> $<span id="totalPagado">${cliente.totalPagado}</span></p>
+      <p><strong>Devolución:</strong> $<span id="refund">0</span></p>
+      <label for="paymentAmount">Monto del Pago:</label>
+      <input type="number" id="paymentAmount" min="1" placeholder="Ingresa el monto" />
+      <button id="payButton">Registrar Pago</button>
+      <div class="output">
+          <h3>Estado:</h3>
+          <div id="status"></div>
+      </div>
+      <button onclick="renderizarListaPagos()">Volver</button>
+  `;
+
+  const payButton = document.getElementById('payButton');
+  const paymentInput = document.getElementById('paymentAmount');
+  const statusOutput = document.getElementById('status');
+  const totalPagadoOutput = document.getElementById('totalPagado');
+  const refundOutput = document.getElementById('refund');
+
+  // Estado inicial de las semanas
+  cliente.weeksStatus = Array(cliente.semanasTotales).fill(false);
+  
+  function updateStatusDisplay() {
+      statusOutput.innerHTML = '';
+      cliente.weeksStatus.forEach((paid, index) => {
+          const weekNumber = index + 1;
+          const statusText = paid
+              ? `Semana ${weekNumber} - Pagada ✅`
+              : `Semana ${weekNumber} - Pendiente ❌`;
+          const weekElement = document.createElement('p');
+          weekElement.innerText = statusText;
+          statusOutput.appendChild(weekElement);
+      });
+      totalPagadoOutput.innerText = cliente.totalPagado;
+      refundOutput.innerText = cliente.devolucion || 0;
+  }
+
+  payButton.addEventListener('click', () => {
+      const payment = parseFloat(paymentInput.value);
+
+      if (isNaN(payment) || payment <= 0) {
+          alert('Por favor ingresa un monto válido.');
+          return;
+      }
+
+      cliente.totalPagado += payment;
+
+      if (cliente.totalPagado > cliente.montoPrestamo) {
+          cliente.devolucion = cliente.totalPagado - cliente.montoPrestamo;
+          cliente.totalPagado = cliente.montoPrestamo;
+      } else {
+          cliente.devolucion = 0;
+      }
+
+      let remainingPaid = cliente.totalPagado;
+      for (let i = 0; i < cliente.semanasTotales; i++) {
+          if (cliente.weeksStatus[i]) {
+              remainingPaid -= cliente.pagoSemanal;
+          } else if (remainingPaid >= cliente.pagoSemanal) {
+              cliente.weeksStatus[i] = true;
+              remainingPaid -= cliente.pagoSemanal;
+          }
+      }
+
+      if (cliente.totalPagado === cliente.montoPrestamo) {
+          alert('¡Préstamo completado! 🎉');
+          payButton.disabled = true;
+      }
+
+      updateStatusDisplay();
+      paymentInput.value = '';
+  });
+
+  updateStatusDisplay();
+}
+
+
+
+--------------------------------------------------------------------------------------------------
+function mostrarDetallesCliente(index) {
+  const cliente = clients[index];
+  const listaClientes = document.getElementById('clientList');
+
+  listaClientes.innerHTML = `
+    <p><strong>Nombre:</strong> ${cliente.nombre}</p>
+    <p><strong>Teléfono:</strong> ${cliente.telefono}</p>
+    <p><strong>Dirección:</strong> ${cliente.calle}</p>
+    <p><strong>Deuda:</strong> $${cliente.deuda}</p>
+    <p><strong>Semana Actual:</strong> ${cliente.semana} de ${cliente.semanasTotales}</p>
+    <p><strong>Pago Semanal:</strong> $${cliente.pagoSemanal}</p>
+    <p><strong>Referencia:</strong> ${cliente.referencia}</p>
+    <p><strong>Total Pagado:</strong> $${cliente.totalPagado}</p>
+    <button onclick="renderizarListaClientes()">Volver</button>
+    `;
+}
+
+// Agregar un nuevo cliente
+function agregarCliente(event) {
+  event.preventDefault();
+  const nombre = document.getElementById('name').value;
+  const calle = document.getElementById('street').value;
+  const telefono = document.getElementById('Telefono').value;
+  const semanasTotales = document.getElementById('semanasTotales').value;
+  const deuda = parseFloat(document.getElementById('debt').value)
+  const referencia = document.getElementById('addReference').checked
+    ? document.getElementById('reference').value
+    : 'Ninguna';
+
+  const cliente = {
+    nombre,
+    calle,
+    deuda,
+    telefono,
+    referencia,
+    semana: 1,
+    semanasTotales,
+    pagoSemanal: deuda / 10,
+    totalPagado: 0,
+    deudaRestante: deuda
+  };
+  clients.push(cliente);
+  document.getElementById('clientDataForm').reset();
+  mostrarSeccion('registro'); // Actualiza la lista de registro automáticamente
+}
